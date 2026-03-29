@@ -667,8 +667,8 @@ GROUP BY
 	a.first_name,
 	a.last_name
 ORDER BY 
-	actor_inactive_period DESC
-FETCH FIRST 3 ROWS WITH TIES;
+	actor_inactive_period DESC;
+-- FETCH FIRST 3 ROWS WITH TIES;
 
 -- var.2 CTE
 WITH actors_last_film AS(
@@ -696,8 +696,8 @@ SELECT
 		EXTRACT(YEAR FROM CURRENT_DATE) - last_film_release_year AS actor_inactive_period
 FROM actors_last_film
 ORDER BY 
-	actor_inactive_period DESC
-FETCH FIRST 3 ROWS WITH TIES;
+	actor_inactive_period DESC;
+-- FETCH FIRST 3 ROWS WITH TIES;
 
 -- var.3 SUBQUERY
 SELECT 
@@ -724,8 +724,8 @@ FROM (
 		a.last_name
 ) AS actor_last_film
 ORDER BY 
-	actor_inactive_period DESC
-FETCH FIRST 3 ROWS WITH TIES;
+	actor_inactive_period DESC;
+-- FETCH FIRST 3 ROWS WITH TIES;
 
 
 -- V2: GAPS between sequential films per each actor 
@@ -769,7 +769,7 @@ GROUP BY
     a.last_name
 ORDER BY 
     max_career_gap DESC, 
-    a.last_name ASC
-FETCH FIRST 3 ROWS WITH TIES;
+    a.last_name ASC;
+-- FETCH FIRST 3 ROWS WITH TIES;
 
 
