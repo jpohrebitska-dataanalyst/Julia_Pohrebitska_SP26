@@ -64,8 +64,11 @@ SELECT
 	f.film_id, 
 	f.title AS film_title, 
 	f.rental_rate, 
-	f.release_year
+	f.release_year,
+	c.name AS category_name
 FROM public.film f
+INNER JOIN public.film_category fc ON fc.film_id = f.film_id
+INNER JOIN public.category c ON c.category_id = fc.category_id
 WHERE f.film_id IN (
 	SELECT
 		fc.film_id
