@@ -301,15 +301,15 @@ LIMIT 5;
 -- var.1 JOIN
 SELECT 
 	f.release_year,
-	SUM(CASE WHEN c.name = 'Drama' THEN 1 ELSE 0 END) AS number_of_drama_movies,
-	SUM(CASE WHEN c.name = 'Travel' THEN 1 ELSE 0 END) AS number_of_travel_movies,
-	SUM(CASE WHEN c.name = 'Documentary' THEN 1 ELSE 0 END) AS number_of_documentary_movies
+	SUM(CASE WHEN LOWER(c.name) = 'drama' THEN 1 ELSE 0 END) AS number_of_drama_movies,
+	SUM(CASE WHEN LOWER(c.name) = 'travel' THEN 1 ELSE 0 END) AS number_of_travel_movies,
+	SUM(CASE WHEN LOWER(c.name) = 'documentary' THEN 1 ELSE 0 END) AS number_of_documentary_movies
 FROM public.category c
 INNER JOIN public.film_category fc
 	ON fc.category_id = c.category_id
 INNER JOIN public.film f
 	ON f.film_id = fc.film_id	
-WHERE c.name IN ('Drama', 'Travel', 'Documentary') -- for optimization purpose (slower without WHERE)
+WHERE LOWER(c.name) IN ('drama', 'travel', 'documentary') -- for optimization purpose (slower without WHERE)
 GROUP BY
 	f.release_year
 ORDER BY 
@@ -327,13 +327,13 @@ WITH films_genres AS(
 		ON fc.film_id = f.film_id 
 	INNER JOIN category c
 		ON c.category_id = fc.category_id 
-	WHERE c.name IN ('Drama', 'Travel', 'Documentary')
+	WHERE LOWER(c.name) IN ('drama', 'travel', 'documentary')
 )
 SELECT 
 	fg.release_year,
-	SUM(CASE WHEN fg.name = 'Drama' THEN 1 ELSE 0 END) AS number_of_drama_movies,
-	SUM(CASE WHEN fg.name = 'Travel' THEN 1 ELSE 0 END) AS number_of_travel_movies,
-	SUM(CASE WHEN fg.name = 'Documentary' THEN 1 ELSE 0 END) AS number_of_documentary_movies
+	SUM(CASE WHEN LOWER(fg.name) = 'drama' THEN 1 ELSE 0 END) AS number_of_drama_movies,
+	SUM(CASE WHEN LOWER(fg.name) = 'travel' THEN 1 ELSE 0 END) AS number_of_travel_movies,
+	SUM(CASE WHEN LOWER(fg.name) = 'documentary' THEN 1 ELSE 0 END) AS number_of_documentary_movies
 FROM films_genres fg
 GROUP BY 
 	fg.release_year 
@@ -344,9 +344,9 @@ ORDER BY
 -- var.3 SUBQUERY
 SELECT 
 	fg.release_year,
-	SUM(CASE WHEN fg.name = 'Drama' THEN 1 ELSE 0 END) AS number_of_drama_movies,
-	SUM(CASE WHEN fg.name = 'Travel' THEN 1 ELSE 0 END) AS number_of_travel_movies,
-	SUM(CASE WHEN fg.name = 'Documentary' THEN 1 ELSE 0 END) AS number_of_documentary_movies
+	SUM(CASE WHEN LOWER(fg.name) = 'drama' THEN 1 ELSE 0 END) AS number_of_drama_movies,
+	SUM(CASE WHEN LOWER(fg.name) = 'travel' THEN 1 ELSE 0 END) AS number_of_travel_movies,
+	SUM(CASE WHEN LOWER(fg.name) = 'documentary' THEN 1 ELSE 0 END) AS number_of_documentary_movies
 FROM (
 	SELECT 
 		f.title,
@@ -357,7 +357,7 @@ FROM (
 		ON fc.film_id = f.film_id 
 	INNER JOIN category c
 		ON c.category_id = fc.category_id 
-	WHERE c.name IN ('Drama', 'Travel', 'Documentary')
+	WHERE LOWER(c.name) IN ('drama', 'travel', 'documentary')
 ) fg
 GROUP BY 
 	fg.release_year 
