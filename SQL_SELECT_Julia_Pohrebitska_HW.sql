@@ -522,7 +522,6 @@ LIMIT 3;
 SELECT 
 	f.film_id,
 	f.title,
-	f.rental_rate,
 	f.rating AS rating_code,
 	CASE 
         WHEN f.rating = 'G' THEN 'All ages'
@@ -541,11 +540,10 @@ INNER JOIN rental r
 GROUP BY
 	f.film_id,
 	f.title,
-	f.rental_rate,
 	f.rating
 ORDER BY
 	number_of_rentals DESC,
-	f.rental_rate DESC
+	f.title ASC
 FETCH FIRST 5 ROWS WITH TIES;
 
 -- var.2 CTE
