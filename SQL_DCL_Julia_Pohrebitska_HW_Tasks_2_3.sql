@@ -75,7 +75,19 @@ FROM public.customer;
 -- =============================================
 -- 3. Create a new user group called "rental" and add "rentaluser" to the group. 
 
-CREATE ROLE rental;
+DO $$
+BEGIN
+	IF NOT EXISTS (
+		SELECT 1
+		FROM pg_catalog.pg_roles
+		WHERE rolname = 'rental'
+	) THEN
+		CREATE ROLE rental;
+	END IF;
+END;
+$$
+
+-- CREATE ROLE rental;
 GRANT rental TO rentaluser;
 
 -- =============================================
