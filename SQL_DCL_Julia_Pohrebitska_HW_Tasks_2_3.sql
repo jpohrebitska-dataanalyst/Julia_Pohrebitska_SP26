@@ -29,7 +29,19 @@
 -- 1. Create a new user with the username "rentaluser" and the password "rentalpassword". 
 -- Give the user the ability to connect to the database but no other permissions.
 
-CREATE ROLE rentaluser LOGIN PASSWORD 'rentalpassword';      -- users are roles with login
+DO $$
+	BEGIN
+		IF NOT EXISTS (
+			SELECT 1
+			FROM pg_catalog.pg_roles
+			WHERE rolname = 'rentaluser'
+		) THEN
+			CREATE ROLE rentaluser LOGIN PASSWORD 'rentalpassword';
+		END IF;
+END
+$$;
+
+-- CREATE ROLE rentaluser LOGIN PASSWORD 'rentalpassword';      -- users are roles with login
 GRANT CONNECT ON DATABASE dvdrental TO rentaluser;
 
 -- =============================================
@@ -297,7 +309,7 @@ ALTER TABLE public.payment ENABLE ROW LEVEL SECURITY;
 -- Karl Seal can only see rows with his customer_id (customer_id = 526)
 CREATE POLICY rental_client_karl_seal_policy 
 ON public.rental
-FOR SELECT 
+FOR SELECT
 TO client_karl_seal
 USING (customer_id = 526);
 
