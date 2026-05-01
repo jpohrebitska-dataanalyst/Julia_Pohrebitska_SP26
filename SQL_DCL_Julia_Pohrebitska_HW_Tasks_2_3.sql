@@ -331,17 +331,42 @@ ALTER TABLE public.payment ENABLE ROW LEVEL SECURITY;
 
 -- 3) creating policies
 -- Karl Seal can only see rows with his customer_id (customer_id = 526)
+DROP POLICY IF EXISTS rental_client_karl_seal_policy ON public.rental;
+
 CREATE POLICY rental_client_karl_seal_policy 
 ON public.rental
-FOR SELECT
+FOR SELECT 
 TO client_karl_seal
-USING (customer_id = 526);
+USING (
+	customer_id IN (
+		SELECT c.customer_id
+		FROM public.customer c
+		WHERE lower(c.first_name) = split_part(current_user, '_' , 2)
+			AND lower(c.last_name) = split_part(current_user, '_' , 3)
+	)
+);
+
+
+DROP POLICY IF EXISTS payment_client_karl_seal_policy ON public.payment;
 
 CREATE POLICY payment_client_karl_seal_policy 
 ON public.payment
 FOR SELECT 
 TO client_karl_seal
-USING (customer_id = 526);
+USING (
+	customer_id IN (
+		SELECT c.customer_id
+		FROM public.customer c
+		WHERE lower(c.first_name) = split_part(current_user, '_', 2)
+			AND lower(c.last_name) = split_part(current_user, '_', 3)
+	)
+);
+
+-- inside the policy we have subquery to public.customer --> so we need to grant access also to 
+-- the needed columns to this client (role)
+GRANT SELECT (customer_id, first_name, last_name)
+ON public.customer
+TO client_karl_seal;
 
 -- checking whether RLS is working
 SET ROLE client_karl_seal;
@@ -350,11 +375,21 @@ SET ROLE client_karl_seal;
 -- and doesn't see others.
 SELECT *
 FROM public.rental
-WHERE customer_id = 526;
+WHERE customer_id IN (
+		SELECT c.customer_id
+		FROM public.customer c
+		WHERE lower(c.first_name) = split_part(current_user, '_', 2)
+			AND lower(c.last_name) = split_part(current_user, '_', 3)
+);
 
 SELECT *
 FROM public.rental
-WHERE customer_id <> 526;
+WHERE customer_id NOT IN (
+		SELECT c.customer_id
+		FROM public.customer c
+		WHERE lower(c.first_name) = split_part(current_user, '_', 2)
+			AND lower(c.last_name) = split_part(current_user, '_', 3)
+);
 
 -- we may also check RLS through the table -->  pg_catalog.pg_policies.
 -- or directly in the table information --> Policies
