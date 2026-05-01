@@ -287,7 +287,19 @@ ORDER BY
 	
 
 -- a personalized role is created for an existing customer (customer_id = 526)
-CREATE ROLE client_karl_seal;
+DO $$
+BEGIN
+	IF NOT EXISTS (
+		SELECT 1
+		FROM pg_catalog.pg_roles
+		WHERE rolname = 'client_karl_seal'
+	) THEN
+		CREATE ROLE client_karl_seal;
+	END IF;
+END;
+$$
+
+-- CREATE ROLE client_karl_seal;
 
 -- checking the role for client
 -- it has its own id, rolinherit, but no other rights yet
