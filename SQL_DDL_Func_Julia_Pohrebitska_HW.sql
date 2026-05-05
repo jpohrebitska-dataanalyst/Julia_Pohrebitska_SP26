@@ -853,7 +853,7 @@ SELECT
 FROM public.film f
 LEFT JOIN public.language l
 	ON l.language_id = f.language_id 
-WHERE f.title = 'Operation Fortune';
+WHERE UPPER(f.title) = UPPER('Operation Fortune');
 
 -- the list of all languages:
 SELECT DISTINCT 
