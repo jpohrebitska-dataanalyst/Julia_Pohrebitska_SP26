@@ -70,7 +70,8 @@ GROUP BY
 	EXTRACT(YEAR FROM CURRENT_DATE),
 	EXTRACT(QUARTER FROM CURRENT_DATE),
 	c.category_id,
-	c.name;
+	c.name
+HAVING SUM(p.amount) > 0;
 
 COMMENT ON VIEW public.sales_revenue_by_category_qtr IS
 'Shows total revenue by film category for the current quarter and current year. 
@@ -183,6 +184,7 @@ AS $$
         EXTRACT(QUARTER FROM p_target_date),
         c.category_id,
         c.name
+	HAVING SUM(p.amount) > 0
 $$;
 
 COMMENT ON FUNCTION public.get_sales_revenue_by_category_qtr(DATE) IS
@@ -248,6 +250,7 @@ GROUP BY
     EXTRACT(QUARTER FROM p.payment_date),
     c.category_id,
     c.name
+HAVING SUM(p.amount) > 0
 ORDER BY
     c.category_id;
 
